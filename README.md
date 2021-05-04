@@ -1,5 +1,11 @@
 # garbados-crypt
 
+[![CI](https://github.com/garbados/crypt/actions/workflows/ci.yaml/badge.svg)](https://github.com/garbados/crypt/actions/workflows/ci.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/garbados/crypt/badge.svg?branch=master)](https://coveralls.io/github/garbados/crypt?branch=master)
+[![Stability](https://img.shields.io/badge/stability-stable-green.svg?style=flat-square)](https://nodejs.org/api/documentation.html#documentation_stability_index)
+[![NPM Version](https://img.shields.io/npm/v/garbados-crypt.svg?style=flat-square)](https://www.npmjs.com/package/garbados-crypt)
+[![JS Standard Style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+
 Easy password-based encryption, by [garbados](https://garbados.github.io/my-blog/).
 
 This library attempts to reflect [informed opinions](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html) while respecting realities like resource constraints, tech debt, and so on. The idea is to provide some very simple methods that just do the hard thing for you.
