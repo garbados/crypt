@@ -1,13 +1,12 @@
-'use strict'
-
-const assert = require('assert')
-
 const { secretbox, hash, randomBytes } = require('tweetnacl')
 const { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } = require('tweetnacl-util')
 
+const NO_PASSWORD = 'A password is required for encryption or decryption.'
+const COULD_NOT_DECRYPT = 'Could not decrypt!'
+
 module.exports = class Crypt {
   constructor (password) {
-    assert(password, 'A password is required for encryption or decryption.')
+    if (!password) { throw new Error(NO_PASSWORD) }
     this._key = hash(decodeUTF8(password)).slice(0, secretbox.keyLength)
   }
 
@@ -31,7 +30,7 @@ module.exports = class Crypt {
     )
     const decrypted = secretbox.open(message, nonce, this._key)
     if (!decrypted) {
-      throw new Error('Could not decrypt!')
+      throw new Error(COULD_NOT_DECRYPT)
     } else {
       return encodeUTF8(decrypted)
     }
