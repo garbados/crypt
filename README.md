@@ -59,7 +59,7 @@ If decryption fails, for example because your password is incorrect, an error wi
 First, get the source:
 
 ```bash
-$ git clone TODO
+$ git clone git@github.com:garbados/crypt.git garbados-crypt
 $ cd garbados-crypt
 $ npm i
 ```
@@ -76,6 +76,31 @@ To see test coverage:
 
 ```bash
 $ npm run cov
+```
+
+There is also a simple browser-based test that you can use to perform simple benchmarking in the browser, using [browserify](https://www.npmjs.com/package/browserify). First, start the test server:
+
+```bash
+$ npm run test:browser
+
+...
+
+   ┌────────────────────────────────────────────────┐
+   │                                                │
+   │   Serving!                                     │
+   │                                                │
+   │   - Local:            http://localhost:5000    │
+   │   - On Your Network:  http://10.0.0.131:5000   │
+   │                                                │
+   │   Copied local address to clipboard!           │
+   │                                                │
+   └────────────────────────────────────────────────┘
+```
+
+Now you can visit [http://localhost:5000/test](http://localhost:5000/test) and open your dev console to see the results of the test:
+
+```
+10000 round-trip operations took 322ms
 ```
 
 ## Why TweetNaCl.js?
