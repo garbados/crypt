@@ -1,12 +1,12 @@
 /* global describe, it */
 'use strict'
 
-const assert = require('assert')
+const assert = require('assert').strict
 const Crypt = require('.')
 
 const PLAINTEXT = 'hello world'
 const PASSWORD = 'password'
-const TEST_LENGTH = 1e4 // note: 1e4 = 1 and 4 zeroes (10,000)
+const BENCHMARK = 1e4 // note: 1e4 = 1 and 4 zeroes (10,000)
 
 describe('crypt', function () {
   it('should do the crypto dance', async function () {
@@ -30,10 +30,10 @@ describe('crypt', function () {
     assert(failed)
   })
 
-  it(`should do the crypto dance ${TEST_LENGTH} times`, async function () {
-    this.timeout(TEST_LENGTH) // assume each op will take no more than 1ms
+  it(`should do the crypto dance ${BENCHMARK} times`, async function () {
+    this.timeout(BENCHMARK) // assume each op will take no more than 1ms
     const crypt = new Crypt(PASSWORD)
-    for (let i = 0; i < TEST_LENGTH; i++) {
+    for (let i = 0; i < BENCHMARK; i++) {
       const ciphertext = await crypt.encrypt(PLAINTEXT)
       const decryptext = await crypt.decrypt(ciphertext)
       assert.strictEqual(decryptext, PLAINTEXT)

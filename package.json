@@ -5,15 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "standard && dependency-check --unused --no-dev . && mocha",
+    "test:browser": "browserify test_browser.js -p tinyify -o bundle.js && serve .",
     "cov": "nyc npm test",
     "coveralls": "npm run cov && nyc report --reporter=text-lcov > lcov.info"
   },
   "author": "Diana Thayer <garbados@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "browserify": "^17.0.0",
     "dependency-check": "^4.1.0",
     "mocha": "^8.3.2",
-    "standard": "^16.0.3"
+    "serve": "^11.3.2",
+    "standard": "^16.0.3",
+    "tinyify": "^3.0.0"
   },
   "dependencies": {
     "tweetnacl": "^1.0.3",
