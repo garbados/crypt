@@ -31,7 +31,7 @@ describe('crypt', function () {
   })
 
   it(`should do the crypto dance ${BENCHMARK} times`, async function () {
-    this.timeout(BENCHMARK) // assume each op will take no more than 1ms
+    this.timeout(0)
     const crypt = new Crypt(PASSWORD)
     for (let i = 0; i < BENCHMARK; i++) {
       const ciphertext = await crypt.encrypt(PLAINTEXT)
