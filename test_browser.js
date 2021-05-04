@@ -1,7 +1,7 @@
 const assert = require('assert').strict
 const Crypt = require('.')
 
- // constants; see test.js
+// constants; see test.js
 const PLAINTEXT = 'hello world'
 const PASSWORD = 'password'
 const BENCHMARK = 1e4
