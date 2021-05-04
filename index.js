@@ -30,7 +30,7 @@ async function getKeyFromPassword (password) {
 }
 
 module.exports = class Crypt {
-  constructor (password, options = {}) {
+  constructor (password) {
     if (!password) { throw new Error(NO_PASSWORD) }
     this._pending = getKeyFromPassword(password).then((key) => {
       this._key = key
