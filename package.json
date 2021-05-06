@@ -4,6 +4,7 @@
   "description": "Easy password-based encryption, by garbados.",
   "main": "index.js",
   "scripts": {
+    "build": "browserify -p tinyify index.js -o bundle.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",
     "test:lint": "standard && dependency-check --unused --no-dev .",
     "test:node": "mocha",
@@ -28,7 +29,6 @@
     "mocha": "^8.3.2",
     "mochify": "^7.1.0",
     "nyc": "^14.1.1",
-    "serve": "^11.3.2",
     "standard": "^16.0.3",
     "tinyify": "^3.0.0"
   },
