@@ -4,7 +4,7 @@ const Crypt = require('.')
 
 const PLAINTEXT = 'hello world'
 const PASSWORD = 'password'
-const BENCHMARK = 1e4 // note: 1e4 = 1 and 4 zeroes (10,000)
+const BENCHMARK = 1e2 // note: 1eN = 1 and N zeroes (ex: 1e2 = 100)
 
 describe('crypt', function () {
   it('should do the crypto dance', async function () {
