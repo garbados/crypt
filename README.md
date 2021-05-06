@@ -1,5 +1,11 @@
 # garbados-crypt
 
+[![CI](https://github.com/garbados/crypt/actions/workflows/ci.yaml/badge.svg)](https://github.com/garbados/crypt/actions/workflows/ci.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/garbados/crypt/badge.svg?branch=master)](https://coveralls.io/github/garbados/crypt?branch=master)
+[![Stability](https://img.shields.io/badge/stability-stable-green.svg?style=flat-square)](https://nodejs.org/api/documentation.html#documentation_stability_index)
+[![NPM Version](https://img.shields.io/npm/v/garbados-crypt.svg?style=flat-square)](https://www.npmjs.com/package/garbados-crypt)
+[![JS Standard Style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+
 Easy password-based encryption, by [garbados](https://garbados.github.io/my-blog/).
 
 This library attempts to reflect [informed opinions](https://latacora.micro.blog/2018/04/03/cryptographic-right-answers.html) while respecting realities like resource constraints, tech debt, and so on. The idea is to provide some very simple methods that just do the hard thing for you.
@@ -78,36 +84,11 @@ To see test coverage:
 $ npm run cov
 ```
 
-There is also a simple browser-based test that you can use to perform simple benchmarking in the browser, using [browserify](https://www.npmjs.com/package/browserify). First, start the test server:
-
-```bash
-$ npm run test:browser
-
-...
-
-   ┌────────────────────────────────────────────────┐
-   │                                                │
-   │   Serving!                                     │
-   │                                                │
-   │   - Local:            http://localhost:5000    │
-   │   - On Your Network:  http://10.0.0.131:5000   │
-   │                                                │
-   │   Copied local address to clipboard!           │
-   │                                                │
-   └────────────────────────────────────────────────┘
-```
-
-Now you can visit [http://localhost:5000/test](http://localhost:5000/test) and open your dev console to see the results of the test:
-
-```
-10000 round-trip operations took 322ms
-```
-
 ## Why TweetNaCl.js?
 
-This library uses [tweetnacl](https://www.npmjs.com/package/tweetnacl) for encryption, rather than native crypto. You might have feelings about this.
+This library uses [tweetnacl](https://www.npmjs.com/package/tweetnacl) when it can't find suitable crypto primitives in the environment. You might have feelings about this.
 
-I chose it because it's fast on NodeJS, uses top-shelf algorithms, and has undergone a [reasonable audit](https://www.npmjs.com/package/tweetnacl#audits). I'm open to PRs that use native crypto while retaining Crypt's API.
+I chose it because it's fast on NodeJS, uses top-shelf algorithms, and has undergone a [reasonable audit](https://www.npmjs.com/package/tweetnacl#audits). I'm open to PRs that use replace it with native crypto while retaining Crypt's API.
 
 ## License
 

@@ -1,9 +1,10 @@
 {
   "name": "garbados-crypt",
-  "version": "1.0.0-alpha",
+  "version": "1.0.1-alpha",
   "description": "Easy password-based encryption, by garbados.",
   "main": "index.js",
   "scripts": {
+    "build": "browserify -p tinyify index.js -o bundle.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",
     "test:lint": "standard && dependency-check --unused --no-dev .",
     "test:node": "mocha",
@@ -15,6 +16,11 @@
   },
   "author": "Diana Thayer <garbados@gmail.com>",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garbados/crypt.git"
+  },
+  "homepage": "https://github.com/garbados/crypt",
   "devDependencies": {
     "babel-plugin-istanbul": "^6.0.0",
     "babelify": "^10.0.0",
@@ -23,11 +29,11 @@
     "mocha": "^8.3.2",
     "mochify": "^7.1.0",
     "nyc": "^14.1.1",
-    "serve": "^11.3.2",
     "standard": "^16.0.3",
     "tinyify": "^3.0.0"
   },
   "dependencies": {
+    "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1"
   }
 }
