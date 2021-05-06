@@ -24,10 +24,7 @@ module.exports = class Crypt {
   async decrypt (messageWithNonce) {
     const messageWithNonceAsUint8Array = decodeBase64(messageWithNonce)
     const nonce = messageWithNonceAsUint8Array.slice(0, secretbox.nonceLength)
-    const message = messageWithNonceAsUint8Array.slice(
-      secretbox.nonceLength,
-      messageWithNonce.length
-    )
+    const message = messageWithNonceAsUint8Array.slice(secretbox.nonceLength)
     const decrypted = secretbox.open(message, nonce, this._key)
     if (!decrypted) {
       throw new Error(COULD_NOT_DECRYPT)
