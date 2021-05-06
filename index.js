@@ -138,15 +138,7 @@ module.exports = class Crypt {
   async decrypt (encrypted) {
     await this._pending
     const buffer = decodeBase64(encrypted)
-    try {
-      const encodedPlaintext = await crypto.decrypt(this._key, buffer)
-      return decodeUTF8(encodedPlaintext)
-    } catch (error) {
-      if (error.message === 'Cipher job failed') {
-        throw new Error(COULD_NOT_DECRYPT)
-      } else {
-        throw error
-      }
-    }
+    const encodedPlaintext = await crypto.decrypt(this._key, buffer)
+    return decodeUTF8(encodedPlaintext)
   }
 }
