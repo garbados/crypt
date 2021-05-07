@@ -21,6 +21,23 @@ function decodeUTF8 (buffer) {
   return new TextDecoder('utf8').decode(buffer)
 }
 
+// convenient promise -> callback
+function cbify (resolve, reject) {
+  return (err, result) => {
+    if (err) { reject(err) } else { resolve(result) }
+  }
+}
+
+// check an error message against failure messages
+// to determine if a decryption failure occurred
+function checkDecrypt (error, ...failMessages) {
+  if (failMessages.includes(error.message)) {
+    throw new Error(COULD_NOT_DECRYPT)
+  } else {
+    throw error
+  }
+}
+
 /* BOOTSTRAP CRYPTO PRIMITIVES */
 
 let crypto, browserCrypto
@@ -96,11 +113,7 @@ if (browserCrypto) {
         return plaintext
       } catch (error) {
         // error message is empty in browser but not in node
-        if (error.message === DECRYPT_FAIL || error.message === '') {
-          throw new Error(COULD_NOT_DECRYPT)
-        } else {
-          throw error
-        }
+        checkDecrypt(error, DECRYPT_FAIL, '')
       }
     }
   }
@@ -117,14 +130,14 @@ if (browserCrypto) {
 
   async function randomBytes (n) {
     return new Promise((resolve, reject) => {
-      const cb = (err, buf) => { if (err) { reject(err) } else { resolve(buf) } }
+      const cb = cbify(resolve, reject)
       nodeCrypto.randomBytes(n, cb)
     })
   }
 
   async function pbkdf2 (password, salt) {
     return new Promise((resolve, reject) => {
-      const cb = (err, key) => { if (err) { reject(err) } else { resolve(key) } }
+      const cb = cbify(resolve, reject)
       nodeCrypto.pbkdf2(password, salt, ITERATIONS, KEY_LENGTH, HASH_ALGO, cb)
     })
   }
@@ -161,11 +174,7 @@ if (browserCrypto) {
           cipher.final()
         ])
       } catch (error) {
-        if (error.message === DECRYPT_FAIL) {
-          throw new Error(COULD_NOT_DECRYPT)
-        } else {
-          throw error
-        }
+        checkDecrypt(error, DECRYPT_FAIL)
       }
     }
   }

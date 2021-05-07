@@ -7,6 +7,17 @@ const PASSWORD = 'password'
 const BENCHMARK = 1e2 // note: 1eN = 1 and N zeroes (ex: 1e2 = 100)
 
 describe('crypt', function () {
+  it('should complain about no password', async function () {
+    let failed = false
+    try {
+      const crypt = new Crypt(undefined)
+      failed = !!crypt
+    } catch {
+      failed = true
+    }
+    assert(failed)
+  })
+
   it('should do the crypto dance', async function () {
     const crypt = new Crypt(PASSWORD)
     const ciphertext = await crypt.encrypt(PLAINTEXT)

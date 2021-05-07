@@ -36,7 +36,7 @@ Crypt works in the browser, too! You can require it like this:
 ```html
 <script src="https://raw.githubusercontent.com/garbados/crypt/master/bundle.min.js" charset="utf-8"></script>
 <script type="text/javascript">
-// now you can encrypt in the browser! 4.5kb!
+// now you can encrypt in the browser! 4.6kb!
 const crypt = new Crypt('a very good password')
 </script>
 ```
@@ -103,7 +103,7 @@ module.exports = {
 }
 ```
 
-In the end, Crypt weighs in at around 4.5kb -- not bad for native crypto! But not all browsers have the [necessary primitives](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API), and in order to support them you *will* want to bundle crypto-browserify. This will cause Crypt's bundle to weigh about half a megabyte, but if you need that browser support, that's your option.
+In the end, Crypt weighs in at around 4.6kb -- not bad for native crypto! But not all browsers have the [necessary primitives](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API), and in order to support them you *will* want to bundle crypto-browserify. This will cause Crypt's bundle to weigh about half a megabyte, but if you need that browser support, that's your option.
 
 ## Development
 
