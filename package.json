@@ -7,7 +7,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "release": "npm i && npm run test && npm run build && npm run build:min",
+    "release": "npm run test && npm run build && npm run build:min",
     "build": "browserify -s Crypt -x crypto -x buffer -o bundle.js index.js ",
     "build:min": "uglifyjs -mc -o bundle.min.js bundle.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",

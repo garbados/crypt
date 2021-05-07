@@ -30,6 +30,9 @@ jobs:
 
       - run: npm ci
 
+      # install chromium manually
+      - run: node node_modules/puppeteer/install.js
+
       - name: release testing
         run: npm run release
 
