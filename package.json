@@ -1,6 +1,6 @@
 {
   "name": "garbados-crypt",
-  "version": "1.0.1-alpha",
+  "version": "1.0.2-alpha",
   "description": "Easy password-based encryption, by garbados.",
   "main": "index.js",
   "scripts": {
