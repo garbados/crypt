@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [12, 14, 16]
+        node: [16]
     steps:
       - uses: actions/checkout@v2
 
@@ -30,8 +30,8 @@ jobs:
 
       - run: npm ci
 
-      - name: unit test
-        run: npm test
+      - name: release testing
+        run: npm run release
 
       - name: produce coverage report
         run: npm run coveralls

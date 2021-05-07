@@ -36,12 +36,12 @@ Crypt works in the browser, too! You can require it like this:
 ```html
 <script src="https://raw.githubusercontent.com/garbados/crypt/master/bundle.min.js" charset="utf-8"></script>
 <script type="text/javascript">
-// now you can encrypt in the browser! 26kb!
+// now you can encrypt in the browser! 3.7kb!
 const crypt = new Crypt('a very good password')
 </script>
 ```
 
-You can also require it with [browserify][browserify] or [webpack][webpack], of course.
+You can also require it with [browserify][browserify] or [webpack][webpack], of course, but there are some [caveats](#also-how-to-bundle-crypt) to doing so.
 
 ## Install
 
@@ -103,7 +103,7 @@ module.exports = {
 }
 ```
 
-In the end, Crypt weighs in at around 25kb -- not bad for native crypto!
+In the end, Crypt weighs in at around 3.7kb -- not bad for native crypto!
 
 ## Development
 
