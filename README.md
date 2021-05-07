@@ -56,7 +56,7 @@ const crypt = new Crypt(password)
 ### async crypt.decrypt(ciphertext) => plaintext
 
 - `ciphertext`: An encrypted string produced by `crypt.encrypt()`.
-- `plaintext`: The decrypted message.
+- `plaintext`: The decrypted message as a string.
 
 If decryption fails, for example because your password is incorrect, an error will be thrown.
 
@@ -76,7 +76,7 @@ Use the test suite:
 $ npm test
 ```
 
-The test suite includes a small benchmarking test, in case you're curious about performance.
+The test suite includes a small benchmarking test, which runs on the server and in the browser, in case you're curious about performance.
 
 To see test coverage:
 
@@ -84,11 +84,17 @@ To see test coverage:
 $ npm run cov
 ```
 
+## Also: How To Securely Store A Password
+
+For a password-based encryption system, it makes sense to have a good reference on how to store passwords in a database. To this effect I have written [this gist](https://gist.github.com/garbados/29ca945d5964ef85e7936804c23edb9d#file-how_to_store_passwords-js) to demonstrate safe password obfuscation and verification. If you have any issue with the advice offered there, leave a comment!
+
 ## Why TweetNaCl.js?
 
-This library uses [tweetnacl](https://www.npmjs.com/package/tweetnacl) when it can't find suitable crypto primitives in the environment. You might have feelings about this.
+This library uses [tweetnacl](https://www.npmjs.com/package/tweetnacl) rather than native crypto. You might have feelings about this.
 
-I chose it because it's fast on NodeJS, uses top-shelf algorithms, and has undergone a [reasonable audit](https://www.npmjs.com/package/tweetnacl#audits). I'm open to PRs that use replace it with native crypto while retaining Crypt's API.
+I chose it because it's fast on NodeJS, bundles conveniently (33kb!), uses top-shelf algorithms, and has undergone a [reasonable audit](https://www.npmjs.com/package/tweetnacl#audits).
+
+That said, I'm open to PRs that replace it with native crypto while retaining Crypt's API.
 
 ## License
 
