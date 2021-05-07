@@ -1,4 +1,4 @@
-const tweetnacl = require('tweetnacl')
+const { createCipheriv, createDecipheriv, pbkdf2, randomBytes } = require('crypto')
 const { encodeBase64, decodeBase64 } = require('tweetnacl-util')
 
 /* CONSTANTS */
@@ -92,28 +92,59 @@ if (browserCrypto) {
     }
   }
 } else {
-  const { hash, secretbox, randomBytes } = tweetnacl
+  const KEY_LENGTH = 32
+  const KEY_ALGO = 'AES-256-GCM'
+  const HASH_ALGO = 'sha256'
+  const TAG_LENGTH = 16
+  const DECRYPT_FAIL = 'Unsupported state or unable to authenticate data'
+  async function _randomBytes (n) {
+    return new Promise((resolve, reject) => {
+      randomBytes(n, (err, buf) => {
+        if (err) { reject(err) } else { resolve(buf) }
+      })
+    })
+  }
   crypto = {
     getKeyFromPassword: async function (password) {
-      return hash(encodeUTF8(password)).slice(0, secretbox.keyLength)
+      return (salt) => {
+        return new Promise((resolve, reject) => {
+          pbkdf2(password, salt, ITERATIONS, KEY_LENGTH, HASH_ALGO, (err, key) => {
+            if (err) { reject(err) } else { resolve(key) }
+          })
+        })
+      }
     },
-    encrypt: async function (key, plaintext) {
-      const nonce = randomBytes(secretbox.nonceLength)
-      const messageUint8 = encodeUTF8(plaintext)
-      const box = secretbox(messageUint8, nonce, key)
-      const fullMessage = new Uint8Array(nonce.length + box.length)
-      fullMessage.set(nonce)
-      fullMessage.set(box, nonce.length)
-      return fullMessage
+    encrypt: async function (deriveKey, plaintext) {
+      const iv = await _randomBytes(IV_LENGTH)
+      const salt = await _randomBytes(SALT_LENGTH)
+      const derivedKey = await deriveKey(salt)
+      const cipher = createCipheriv(KEY_ALGO, derivedKey, iv)
+      const ciphertext = Buffer.concat([
+        cipher.update(plaintext),
+        cipher.final()
+      ])
+      const tag = cipher.getAuthTag()
+      return Buffer.concat([iv, salt, ciphertext, tag])
     },
-    decrypt: async function (key, fullMessage) {
-      const nonce = fullMessage.slice(0, secretbox.nonceLength)
-      const message = fullMessage.slice(secretbox.nonceLength)
-      const decrypted = secretbox.open(message, nonce, key)
-      if (!decrypted) {
-        throw new Error(COULD_NOT_DECRYPT)
-      } else {
-        return decrypted
+    decrypt: async function (deriveKey, buffer) {
+      const iv = buffer.slice(0, IV_LENGTH)
+      const salt = buffer.slice(IV_LENGTH, IV_LENGTH + SALT_LENGTH)
+      const ciphertext = buffer.slice(IV_LENGTH + SALT_LENGTH, buffer.length - TAG_LENGTH)
+      const tag = buffer.slice(buffer.length - TAG_LENGTH)
+      const derivedKey = await deriveKey(salt)
+      try {
+        const cipher = createDecipheriv(KEY_ALGO, derivedKey, iv)
+        cipher.setAuthTag(tag)
+        return Buffer.concat([
+          cipher.update(ciphertext),
+          cipher.final()
+        ])
+      } catch (error) {
+        if (error.message === DECRYPT_FAIL) {
+          throw new Error(COULD_NOT_DECRYPT)
+        } else {
+          throw error
+        }
       }
     }
   }
