@@ -1,4 +1,3 @@
-const { createCipheriv, createDecipheriv, pbkdf2, randomBytes } = require('crypto')
 const { encodeBase64, decodeBase64 } = require('tweetnacl-util')
 
 /* CONSTANTS */
@@ -92,6 +91,7 @@ if (browserCrypto) {
     }
   }
 } else {
+  const { createCipheriv, createDecipheriv, pbkdf2, randomBytes } = require('crypto')
   const KEY_LENGTH = 32
   const KEY_ALGO = 'AES-256-GCM'
   const HASH_ALGO = 'sha256'

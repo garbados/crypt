@@ -4,7 +4,8 @@
   "description": "Easy password-based encryption, by garbados.",
   "main": "index.js",
   "scripts": {
-    "build": "browserify index.js | npx uglify-js --compress --mangle -o bundle.min.js",
+    "release": "npm run test && npm run build",
+    "build": "browserify -s Crypt -x crypto index.js | npx uglify-js --compress --mangle -o bundle.min.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",
     "test:lint": "standard && dependency-check --unused --no-dev .",
     "test:node": "mocha",
@@ -34,5 +35,8 @@
   },
   "dependencies": {
     "tweetnacl-util": "^0.15.1"
+  },
+  "externals": {
+
   }
 }

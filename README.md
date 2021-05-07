@@ -26,6 +26,18 @@ console.log(decrypted)
 
 Crypt only works with plaintext, so remember to use `JSON.stringify()` on objects before encryption and `JSON.parse()` after decryption. For classes and the like, you'll need to choose your own encoding / decoding approach.
 
+Crypt works in the browser, too! You can require it like this:
+
+```html
+<script src="https://raw.githubusercontent.com/garbados/crypt/master/bundle.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+// now you can encrypt in the browser! 26kb!
+const crypt = new Crypt('a very good password')
+</script>
+```
+
+You can also require it with [browserify](https://www.npmjs.com/package/browserify) or [webpack](https://www.npmjs.com/package/webpack), of course.
+
 ## Install
 
 Use [npm](https://www.npmjs.com/) or whatever.
