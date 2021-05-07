@@ -7,8 +7,9 @@
     "node": ">=16"
   },
   "scripts": {
-    "release": "npm run test && npm run build",
-    "build": "browserify -s Crypt -x crypto index.js | npx uglify-js -mc -o bundle.min.js",
+    "release": "npm run test && npm run build && npm run build:min",
+    "build": "browserify -s Crypt -x crypto -x buffer -o bundle.js index.js ",
+    "build:min": "uglifyjs -mc -o bundle.min.js bundle.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",
     "test:lint": "standard && dependency-check --unused --no-dev .",
     "test:node": "mocha",
