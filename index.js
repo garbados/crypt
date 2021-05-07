@@ -81,7 +81,6 @@ if (browserCrypto) {
         const plaintext = await subtle.decrypt(opts, derivedKey, ciphertext)
         return plaintext
       } catch (error) {
-        // TODO use constant-time comparison method
         if (error.message === DECRYPT_FAIL) {
           throw new Error(COULD_NOT_DECRYPT)
         } else {

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "release": "npm run test && npm run build",
-    "build": "browserify -s Crypt -x crypto index.js | npx uglify-js --compress --mangle -o bundle.min.js",
+    "build": "browserify -s Crypt -x crypto index.js | npx uglify-js -mc -o bundle.min.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",
     "test:lint": "standard && dependency-check --unused --no-dev .",
     "test:node": "mocha",
