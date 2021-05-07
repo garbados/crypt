@@ -44,3 +44,14 @@ jobs:
         with:
           github-token: ${{ github.token }}
           path-to-lcov: ./lcov.info
+          flag-name: run-${{ matrix.os }}-${{ matrix.node }}
+          parallel: true
+  finish:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
