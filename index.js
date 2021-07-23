@@ -22,31 +22,33 @@ module.exports = class Crypt {
     return { key, salt }
   }
 
-  constructor (password) {
+  constructor (password, salt) {
     if (!password) { throw new Error(NO_PASSWORD) }
-    this._pass = hash(decodeUTF8(password)).slice(0, KEY_LENGTH)
+    this._pass = hash(decodeUTF8(password)).slice(KEY_LENGTH)
+    this._setup = Crypt.deriveKey(this._pass, salt).then(async ({ key, salt: newSalt }) => {
+      this._key = key
+      this._salt = salt || newSalt
+    })
   }
 
   async encrypt (plaintext) {
-    const { key, salt } = await Crypt.deriveKey(this._pass)
+    await this._setup
     const nonce = randomBytes(secretbox.nonceLength)
     const messageUint8 = decodeUTF8(plaintext)
-    const box = secretbox(messageUint8, nonce, key)
-    const fullMessage = new Uint8Array(salt.length + nonce.length + box.length)
-    fullMessage.set(salt)
-    fullMessage.set(nonce, salt.length)
-    fullMessage.set(box, salt.length + nonce.length)
+    const box = secretbox(messageUint8, nonce, this._key)
+    const fullMessage = new Uint8Array(nonce.length + box.length)
+    fullMessage.set(nonce)
+    fullMessage.set(box, nonce.length)
     const base64FullMessage = encodeBase64(fullMessage)
     return base64FullMessage
   }
 
   async decrypt (messageWithNonce) {
+    await this._setup
     const messageWithNonceAsUint8Array = decodeBase64(messageWithNonce)
-    const salt = messageWithNonceAsUint8Array.slice(0, SALT_LENGTH)
-    const nonce = messageWithNonceAsUint8Array.slice(SALT_LENGTH, SALT_LENGTH + secretbox.nonceLength)
-    const message = messageWithNonceAsUint8Array.slice(SALT_LENGTH + secretbox.nonceLength)
-    const { key } = await Crypt.deriveKey(this._pass, salt)
-    const decrypted = secretbox.open(message, nonce, key)
+    const nonce = messageWithNonceAsUint8Array.slice(0, secretbox.nonceLength)
+    const message = messageWithNonceAsUint8Array.slice(secretbox.nonceLength)
+    const decrypted = secretbox.open(message, nonce, this._key)
     if (!decrypted) {
       throw new Error(COULD_NOT_DECRYPT)
     } else {
