@@ -60,4 +60,19 @@ describe('crypt', function () {
       assert.strictEqual(decryptext, PLAINTEXT)
     }
   })
+
+  it('should export to a string', async function () {
+    const crypt = new Crypt(PASSWORD)
+    const exportString = await crypt.export()
+    assert.equal(typeof exportString, 'string')
+  })
+
+  it('should import from an export payload', async function () {
+    const crypt1 = new Crypt(PASSWORD)
+    const exportString = await crypt1.export()
+    const crypt2 = await Crypt.import(PASSWORD, exportString)
+    const encrypted = await crypt1.encrypt(PLAINTEXT)
+    const decrypted = await crypt2.decrypt(encrypted)
+    assert.equal(decrypted, PLAINTEXT)
+  })
 })
