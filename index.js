@@ -39,7 +39,7 @@ module.exports = class Crypt {
   constructor (password, salt, opts = {}) {
     if (!password) { throw new Error(NO_PASSWORD) }
     this._raw_pass = password
-    this._pass = hash(decodeUTF8(password)).slice(0, KEY_LENGTH)
+    this._pass = hash(decodeUTF8(password))
     this._opts = { iterations: opts.iterations || ITERATIONS }
     this._setup = Crypt.deriveKey(this._pass, salt, this._opts)
       .then(({ key, salt: newSalt }) => {
