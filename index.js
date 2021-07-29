@@ -5,7 +5,7 @@ const { pbkdf2, createSHA512 } = require('hash-wasm')
 const NO_PASSWORD = 'A password is required for encryption or decryption.'
 const COULD_NOT_DECRYPT = 'Could not decrypt!'
 
-const SALT_LENGTH = 24
+const SALT_LENGTH = 32
 const KEY_LENGTH = 32
 const ITERATIONS = 1e4
 
