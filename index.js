@@ -24,14 +24,15 @@ module.exports = class Crypt {
     return { key, salt }
   }
 
-  static async import (password, importString) {
-    const fullMessage = decodeBase64(importString)
+  static async import (password, exportString) {
+    // parse exportString: decodeBase64 =>
+    const fullMessage = decodeBase64(exportString)
     const tempSalt = fullMessage.slice(0, SALT_LENGTH)
     const exportBytes = fullMessage.slice(SALT_LENGTH)
     const exportEncrypted = encodeUTF8(exportBytes)
     const tempCrypt = new Crypt(password, tempSalt)
-    const exportString = await tempCrypt.decrypt(exportEncrypted)
-    const [saltString, opts] = JSON.parse(exportString)
+    const exportJson = await tempCrypt.decrypt(exportEncrypted)
+    const [saltString, opts] = JSON.parse(exportJson)
     const salt = decodeBase64(saltString)
     return new Crypt(password, salt, opts)
   }
@@ -53,8 +54,8 @@ module.exports = class Crypt {
     const tempCrypt = new Crypt(this._raw_pass)
     await tempCrypt._setup
     const saltString = encodeBase64(this._salt)
-    const exportString = JSON.stringify([saltString, this._opts])
-    const exportEncrypted = await tempCrypt.encrypt(exportString)
+    const exportJson = JSON.stringify([saltString, this._opts])
+    const exportEncrypted = await tempCrypt.encrypt(exportJson)
     const exportBytes = decodeUTF8(exportEncrypted)
     const fullMessage = new Uint8Array(tempCrypt._salt.length + exportBytes.length)
     fullMessage.set(tempCrypt._salt)
