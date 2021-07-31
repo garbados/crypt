@@ -1,8 +1,9 @@
 {
   "name": "garbados-crypt",
-  "version": "1.0.2-alpha",
+  "version": "2.0.0-beta",
   "description": "Easy password-based encryption, by garbados.",
   "main": "index.js",
+  "files": [],
   "scripts": {
     "build": "browserify -p tinyify index.js -o bundle.js",
     "test": "npm run test:lint && npm run test:node && npm run test:browser",
@@ -27,7 +28,7 @@
     "browserify": "^17.0.0",
     "dependency-check": "^4.1.0",
     "mocha": "^8.3.2",
-    "mochify": "^7.1.0",
+    "mochify": "^8.1.0",
     "nyc": "^14.1.1",
     "standard": "^16.0.3",
     "tinyify": "^3.0.0"
