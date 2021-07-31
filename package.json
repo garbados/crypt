@@ -37,5 +37,8 @@
     "hash-wasm": "^4.9.0",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1"
+  },
+  "engines": {
+    "node": ">=12"
   }
 }
