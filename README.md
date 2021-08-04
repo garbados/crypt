@@ -47,9 +47,10 @@ const crypt = new Crypt(password)
 ### new Crypt(password, [salt, [opts]])
 
 - `password`: A string. Make sure it's good! Or not.
-- `salt`: A salt, either as a byte array or a string. If omitted, a random salt is generated. *Rather than bother carrying this with you, use `crypt.export()` and `Crypt.import()` to transport your credentials!*
+- `salt`: A salt, either as a byte array or a string. If omitted or falsy, a random salt is generated. *Rather than bother carrying this with you, use `crypt.export()` and `Crypt.import()` to transport your credentials!*
 - `opts`: Options!
 - `opts.iterations`: The number of iterations to use to hash your password via [pbkdf2](https://en.wikipedia.org/wiki/PBKDF2). Defaults to 10,000.
+- `opts.saltLength`: The length of the salt to be generated, in bytes. Defaults to 32.
 
 ### async Crypt.import(password, exportString) => new Crypt
 
