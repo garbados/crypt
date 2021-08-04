@@ -8,6 +8,8 @@ const PASSWORD = 'password'
 const BENCHMARK = 1e4 // note: 1e4 = 1 and 4 zeroes (10,000)
 
 describe('crypt', function () {
+  this.timeout(1000 * 10) // 10 seconds
+  
   it('should derive a key from a password', async function () {
     let { key, salt } = await Crypt.deriveKey(PASSWORD)
     key = encodeBase64(key)
@@ -68,7 +70,6 @@ describe('crypt', function () {
   })
 
   it('should import from an export payload', async function () {
-    this.timeout(1000 * 10) // 10 seconds
     const crypt1 = new Crypt(PASSWORD)
     const exportString = await crypt1.export()
     const crypt2 = await Crypt.import(PASSWORD, exportString)
