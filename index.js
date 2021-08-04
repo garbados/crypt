@@ -9,14 +9,22 @@ const SALT_LENGTH = 32
 const KEY_LENGTH = 32
 const ITERATIONS = 1e4
 
+// istanbul ignore next // for some reason
+function getDefaultOpts (opts = {}) {
+  return {
+    iterations: opts.iterations || ITERATIONS,
+    saltLength: opts.saltLength || SALT_LENGTH
+  }
+}
+
 module.exports = class Crypt {
   static async deriveKey (password, salt, opts = {}) {
-    const iterations = opts.iterations || ITERATIONS
-    if (!salt) { salt = randomBytes(SALT_LENGTH) }
+    opts = getDefaultOpts(opts)
+    if (!salt) { salt = randomBytes(opts.saltLength) }
     const key = await pbkdf2({
       password,
       salt,
-      iterations,
+      iterations: opts.iterations,
       hashLength: KEY_LENGTH,
       hashFunction: createSHA512(),
       outputType: 'binary'
@@ -41,7 +49,7 @@ module.exports = class Crypt {
     if (!password) { throw new Error(NO_PASSWORD) }
     this._raw_pass = password
     this._pass = hash(decodeUTF8(password))
-    this._opts = { iterations: opts.iterations || ITERATIONS }
+    this._opts = getDefaultOpts(opts)
     this._setup = Crypt.deriveKey(this._pass, salt, this._opts)
       .then(({ key, salt: newSalt }) => {
         this._key = key
