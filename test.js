@@ -68,6 +68,7 @@ describe('crypt', function () {
   })
 
   it('should import from an export payload', async function () {
+    this.timeout(1000 * 10) // 10 seconds
     const crypt1 = new Crypt(PASSWORD)
     const exportString = await crypt1.export()
     const crypt2 = await Crypt.import(PASSWORD, exportString)
