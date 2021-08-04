@@ -6,8 +6,8 @@ const NO_PASSWORD = 'A password is required for encryption or decryption.'
 const COULD_NOT_DECRYPT = 'Could not decrypt!'
 
 const SALT_LENGTH = 2 ** 12 // 4096 bytes / 32768 bits
-const KEY_LENGTH = 2 ** 5   // 32 bytes / 256 bits
-const ITERATIONS = 1e5      // 1 & 5 zeroes / 100,000
+const KEY_LENGTH = 2 ** 5 // 32 bytes / 256 bits
+const ITERATIONS = 1e5 // 1 & 5 zeroes / 100,000
 
 // istanbul ignore next // for some reason
 function getDefaultOpts (opts = {}) {
