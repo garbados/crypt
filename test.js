@@ -77,4 +77,10 @@ describe('crypt', function () {
     const decrypted = await crypt2.decrypt(encrypted)
     assert.equal(decrypted, PLAINTEXT)
   })
+
+  it('should create an instance asynchronously', async function () {
+    const crypt = await Crypt.new(PASSWORD)
+    assert(crypt._key)
+    assert(crypt._salt)
+  })
 })
