@@ -1,30 +1,40 @@
 const { secretbox, hash, randomBytes } = require('tweetnacl')
 const { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } = require('tweetnacl-util')
-const { pbkdf2, createSHA512 } = require('hash-wasm')
+const { argon2id, createSHA512 } = require('hash-wasm')
 
 const NO_PASSWORD = 'A password is required for encryption or decryption.'
 const COULD_NOT_DECRYPT = 'Could not decrypt!'
 
-const SALT_LENGTH = 32
 const KEY_LENGTH = 32
-const ITERATIONS = 1e4
 
+const SALT_LENGTH = 16 // size of salt in bytes; argon2 authors recommend 16 (128 bits)
+const MEMORY_SIZE = 2 ** 12 // 2 ** N kilobytes; increase N to raise strength
+const ITERATIONS = 1e2 // 1 and N zeroes; increase N to raise strength
+const PARALLELISM = 1 // how many threads to spawn. crypt assumes a single-threaded environment.
+
+// convenience method for combining given opts with defaults
 // istanbul ignore next // for some reason
-function getDefaultOpts (opts = {}) {
+function getOpts (opts = {}) {
   return {
+    saltLength: opts.saltLength || SALT_LENGTH,
+    memorySize: opts.memorySize || MEMORY_SIZE,
     iterations: opts.iterations || ITERATIONS,
-    saltLength: opts.saltLength || SALT_LENGTH
+    parallelism: opts.parallelism || PARALLELISM
   }
 }
 
 module.exports = class Crypt {
+  // derive an encryption key from given parameters
   static async deriveKey (password, salt, opts = {}) {
-    opts = getDefaultOpts(opts)
-    if (!salt) { salt = randomBytes(opts.saltLength) }
-    const key = await pbkdf2({
+    // parse opts
+    opts = getOpts(opts)
+    const { saltLength, ...keyOpts } = opts
+    // generate a random salt if one is not provided
+    if (!salt) { salt = randomBytes(saltLength) }
+    const key = await argon2id({
       password,
       salt,
-      iterations: opts.iterations,
+      ...keyOpts,
       hashLength: KEY_LENGTH,
       hashFunction: createSHA512(),
       outputType: 'binary'
@@ -32,24 +42,28 @@ module.exports = class Crypt {
     return { key, salt }
   }
 
+  // create a new Crypt instance from
   static async import (password, exportString) {
-    // parse exportString: decodeBase64 =>
-    const fullMessage = decodeBase64(exportString)
-    const tempSalt = fullMessage.slice(0, SALT_LENGTH)
-    const exportBytes = fullMessage.slice(SALT_LENGTH)
-    const exportEncrypted = encodeUTF8(exportBytes)
-    const tempCrypt = new Crypt(password, tempSalt)
-    const exportJson = await tempCrypt.decrypt(exportEncrypted)
+    // parse exportString into its components
+    const exportBytes = decodeBase64(exportString)
+    const exportJson = encodeUTF8(exportBytes)
     const [saltString, opts] = JSON.parse(exportJson)
     const salt = decodeBase64(saltString)
-    return new Crypt(password, salt, opts)
+    // return a new crypt with the imported settings
+    return Crypt.new(password, salt, opts)
+  }
+
+  // async constructor which awaits setup
+  static async new (...args) {
+    const crypt = new Crypt(...args)
+    await crypt._setup
+    return crypt
   }
 
   constructor (password, salt, opts = {}) {
     if (!password) { throw new Error(NO_PASSWORD) }
-    this._raw_pass = password
     this._pass = hash(decodeUTF8(password))
-    this._opts = getDefaultOpts(opts)
+    this._opts = getOpts(opts)
     this._setup = Crypt.deriveKey(this._pass, salt, this._opts)
       .then(({ key, salt: newSalt }) => {
         this._key = key
@@ -59,16 +73,11 @@ module.exports = class Crypt {
 
   async export () {
     await this._setup
-    const tempCrypt = new Crypt(this._raw_pass)
-    await tempCrypt._setup
     const saltString = encodeBase64(this._salt)
     const exportJson = JSON.stringify([saltString, this._opts])
-    const exportEncrypted = await tempCrypt.encrypt(exportJson)
-    const exportBytes = decodeUTF8(exportEncrypted)
-    const fullMessage = new Uint8Array(tempCrypt._salt.length + exportBytes.length)
-    fullMessage.set(tempCrypt._salt)
-    fullMessage.set(exportBytes, tempCrypt._salt.length)
-    return encodeBase64(fullMessage)
+    const exportBytes = decodeUTF8(exportJson)
+    const exportString = encodeBase64(exportBytes)
+    return exportString
   }
 
   async encrypt (plaintext) {

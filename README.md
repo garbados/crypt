@@ -49,8 +49,18 @@ const crypt = new Crypt(password)
 - `password`: A string. Make sure it's good! Or not.
 - `salt`: A salt, either as a byte array or a string. If omitted or falsy, a random salt is generated. *Rather than bother carrying this with you, use `crypt.export()` and `Crypt.import()` to transport your credentials!*
 - `opts`: Options!
-- `opts.iterations`: The number of iterations to use to hash your password via [pbkdf2](https://en.wikipedia.org/wiki/PBKDF2). Defaults to 10,000.
-- `opts.saltLength`: The length of the salt to be generated, in bytes. Defaults to 32.
+- `opts.iterations`: The number of iterations to use to hash your password via [Argon2](https://en.wikipedia.org/wiki/Argon2). Defaults to 100.
+- `opts.saltLength`: The length of the salt to be generated, in bytes. Defaults to 16.
+- `opts.memorySize`: The number of kilobytes of RAM to use to generate a cryptographic key from a password. Defaults to 4096 KB. *Must be a power of 2.*
+- `opts.parallelism`: The number of threads to use when generating a cryptographic key. Defaults to 1, as Crypt assumes it operates in a single-threaded environment.
+
+#### A note on modifying default settings
+
+Crypt's defaults have been selected to afford a cryptographic strength that does not impose significant performance penalties to applications doing a lot of encrypted reads and writes, such as those using [crypto-pouch](https://github.com/calvinmetcalf/crypto-pouch). If you are facing an attacker with significant resources, such as state actors, consider increasing the `iterations` and `memorySize` options. This will impose notable performance penalties, but as a rule slower cryptography means slower cracking. **You should only modify these settings if you know what you are doing!**
+
+### async Crypt.new(password, [salt, [opts]])
+
+An asynchronous version of Crypt's constructor. Unlike the synchronous constructor, using `.new()` awaits Crypt's setup phase, so that you can explicitly await any problems during setup rather than wait for them to surface during encryption.
 
 ### async Crypt.import(password, exportString) => new Crypt
 
@@ -76,8 +86,6 @@ Exports a string you can use to create a new Crypt instance with `Crypt.import()
 
 If decryption fails, for example because your password is incorrect, an error will be thrown.
 
-### async crypt.
-
 ## Development
 
 First, get the source:
@@ -102,7 +110,22 @@ To see test coverage:
 $ npm run cov
 ```
 
-## Also: How To Securely Store A Password
+## Regarding passwords
+
+Passwords should be generally considered a form of vulnerability. An attacker that manages to solve your encryption, such as by exfiltrating encrypted values and then brute-forcing the decryption key, may gain access to the password you used to encrypt those values. As a result, I highly advise deriving a strong passcode from a memorable passphrase in a non-reversible way, such as by using Argon2 or another derivation function yourself. By using this passcode only for a specific app, you ensure that an attacker will not be able to discover your passphrase even if they crack the passcode.
+
+You can even do this with Crypt itself:
+
+```javascript
+const globalCrypt = await Crypt.new('your_passphrase')
+const passcode = await globalCrypt.encrypt('some_context_phrase') // like the name of the associated app or service
+const contextCrypt = await Crypt.new(passcode)
+// now you can use contextCrypt to encrypt your data
+// with strong guarantees that even if an attacker cracks your crypto,
+// they will not obtain your passphrase.
+```
+
+## How To Securely Store A Password
 
 For a password-based encryption system, it makes sense to have a good reference on how to store passwords in a database. To this effect I have written [this gist](https://gist.github.com/garbados/29ca945d5964ef85e7936804c23edb9d#file-how_to_store_passwords-js) to demonstrate safe password obfuscation and verification. If you have any issue with the advice offered there, leave a comment!
 
