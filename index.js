@@ -45,14 +45,8 @@ module.exports = class Crypt {
   // create a new Crypt instance from
   static async import (password, exportString) {
     // parse exportString into its components
-    const fullMessage = decodeBase64(exportString)
-    const tempSalt = fullMessage.slice(0, SALT_LENGTH) // temp crypt uses defaults
-    const exportBytes = fullMessage.slice(SALT_LENGTH)
-    const exportEncrypted = encodeUTF8(exportBytes)
-    // create a temporary Crypt with the given salt
-    const tempCrypt = await Crypt.new(password, tempSalt)
-    // so we can decrypt and parse exportString's inner settings
-    const exportJson = await tempCrypt.decrypt(exportEncrypted)
+    const exportBytes = decodeBase64(exportString)
+    const exportJson = encodeUTF8(exportBytes)
     const [saltString, opts] = JSON.parse(exportJson)
     const salt = decodeBase64(saltString)
     // return a new crypt with the imported settings
@@ -68,7 +62,6 @@ module.exports = class Crypt {
 
   constructor (password, salt, opts = {}) {
     if (!password) { throw new Error(NO_PASSWORD) }
-    this._raw_pass = password
     this._pass = hash(decodeUTF8(password))
     this._opts = getOpts(opts)
     this._setup = Crypt.deriveKey(this._pass, salt, this._opts)
@@ -80,15 +73,11 @@ module.exports = class Crypt {
 
   async export () {
     await this._setup
-    const tempCrypt = await Crypt.new(this._raw_pass)
     const saltString = encodeBase64(this._salt)
     const exportJson = JSON.stringify([saltString, this._opts])
-    const exportEncrypted = await tempCrypt.encrypt(exportJson)
-    const exportBytes = decodeUTF8(exportEncrypted)
-    const fullMessage = new Uint8Array(tempCrypt._salt.length + exportBytes.length)
-    fullMessage.set(tempCrypt._salt)
-    fullMessage.set(exportBytes, tempCrypt._salt.length)
-    return encodeBase64(fullMessage)
+    const exportBytes = decodeUTF8(exportJson)
+    const exportString = encodeBase64(exportBytes)
+    return exportString
   }
 
   async encrypt (plaintext) {
